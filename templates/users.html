@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>User Access Management | Aegis Guard</title>
+    <!-- BEGIN: Scripts and Config -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'security-dark': '#0f172a',
+                        'security-sidebar': '#1e293b',
+                        'status-normal': '#10b981',
+                        'status-locked': '#ef4444',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- END: Scripts and Config -->
+    <!-- BEGIN: Custom Styles -->
+    <style data-purpose="layout">
+        body {
+            background-color: #f8fafc;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+    <!-- END: Custom Styles -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+</head>
+
+<body class="flex min-h-screen text-slate-800">
+    <!-- BEGIN: Sidebar Navigation -->
+    <aside class="w-64 bg-security-sidebar text-slate-300 flex flex-col hidden lg:flex" data-purpose="sidebar-nav">
+        <div class="p-6 flex items-center gap-3 border-b border-slate-700">
+            <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+            </div>
+            <span class="font-bold text-white tracking-wider uppercase text-sm">AEGIS GUARD</span>
+        </div>
+        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto custom-scrollbar">
+            <a class="flex items-center gap-3 px-4 py-3 hover:bg-slate-700 hover:text-white rounded-lg transition-colors"
+                href="{{ url_for('dashboard') }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                <span>Dashboard</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 bg-blue-600 text-white rounded-lg transition-colors" href="#">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                <span>User Access</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 hover:bg-slate-700 hover:text-white rounded-lg transition-colors"
+                href="#">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                <span>Audit Logs</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 hover:bg-slate-700 hover:text-white rounded-lg transition-colors"
+                href="#">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                </svg>
+                <span>System Config</span>
+            </a>
+        </nav>
+        <div class="p-4 border-t border-slate-700">
+            <div class="flex items-center gap-3 p-2 bg-slate-800 rounded-lg">
+                <img alt="Admin Profile" class="w-10 h-10 rounded-full border border-slate-600"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1iZS682JEJB6gRgmo0izW-O8DEOw1KS_hVNdpzP6-Bs4O3v3gYXHSX74gGaLF-p-X18zplh1x1SrUP4QdZ6BeuBWxrNr-D2NY0ljXoxlt2ZX47udr0j0qYfU4huv8Il4FxN8lulTiop0cA5ZlSKP1ge_bupuWIWIB5ASx2--bmbVpeTbZcoUWzU2a6SRLuzV5QEEqj9vCeaqGUcV2wu9ZGZW2g0xf58WUswWBH8p0sWCBvoyE3leq5W9biCqfgnKDzKzDC4R0xwZk" />
+                <div class="overflow-hidden">
+                    <p class="text-sm font-medium text-white truncate">Administrator</p>
+                    <p class="text-xs text-slate-400 truncate">S. Garrison</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <!-- END: Sidebar Navigation -->
+    <!-- Pop up for New User-->
+    <!-- MODAL -->
+    <div id="userModal" class="fixed inset-0 bg-black/40 hidden flex items-center justify-center z-50">>
+        <div class="bg-white w-[400px] rounded-xl shadow-xl p-6">
+
+            <h2 class="text-lg font-bold mb-4">Onboard New Personnel</h2>
+
+            <input id="name" placeholder="Full Name" class="w-full border p-2 rounded mb-3" />
+
+            <input id="user_id" placeholder="User ID (AG-1105)" class="w-full border p-2 rounded mb-3" />
+
+            <select id="role" class="w-full border p-2 rounded mb-4">
+                <option>Senior Engineer</option>
+                <option>Security Lead</option>
+                <option>Security Ops</option>
+                <option>Junior Dev</option>
+            </select>
+
+            <select id="status" class="w-full border p-2 rounded mb-4">
+                <option value="ACTIVE">Active</option>
+                <option value="OFFLINE">Offline</option>
+                <option value="PENDING">Pending</option>
+                <option value="DISABLED">Disabled</option>
+            </select>
+
+            <!-- Gesture Input -->
+            <div class="text-center mb-4">
+                <p class="text-sm mb-2">Gesture Pattern</p>
+
+                <div id="gestureDisplay" class="mb-2 text-blue-600 font-bold"></div>
+
+                <div class="grid grid-cols-3 gap-2 w-fit mx-auto">
+                    <button onclick="addGesture('UP')">⬆️</button>
+                    <button onclick="addGesture('LEFT')">⬅️</button>
+                    <button onclick="addGesture('RIGHT')">➡️</button>
+                    <button onclick="addGesture('DOWN')">⬇️</button>
+                </div>
+            </div>
+
+            <div class="flex justify-between mt-4">
+                <button onclick="closeModal()">Cancel</button>
+                <button onclick="saveUser()" class="bg-blue-600 text-white px-4 py-2 rounded">
+                    Save
+                </button>
+            </div>
+
+        </div>
+    </div>
+    <!-- BEGIN: Main Content Area -->
+    <main class="flex-1 flex flex-col min-h-screen overflow-hidden">
+        <!-- BEGIN: Top Header -->
+        <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between shadow-sm">
+            <div class="flex items-center gap-6">
+                <h1 class="text-2xl font-bold text-slate-900">User Access Management</h1>
+                <!-- System Status Indicator -->
+                <div
+                    class="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full">
+                    <span class="relative flex h-3 w-3">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-sm font-bold uppercase tracking-tight">System Status: NORMAL</span>
+                </div>
+                <!-- Search Bar -->
+                <div class="relative hidden xl:block w-72">
+                    <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fill="none"
+                        stroke="currentColor" viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round"
+                            stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                    <input
+                        class="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-4 py-1.5 text-sm focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
+                        placeholder="Search personnel..." type="text" />
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="text-slate-500 hover:text-slate-700 relative p-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                    <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                </button>
+                <!-- Action Button -->
+                <button onclick="openModal()"
+                    class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-bold text-sm transition-all shadow-md flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                    Add New User
+                </button>
+            </div>
+        </header>
+        <!-- END: Top Header -->
+        <!-- BEGIN: Main Grid Area -->
+        <div class="p-8 overflow-y-auto custom-scrollbar flex-1">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Personnel Card 1 -->
+                {% for user in users %}
+                <div
+                    class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm hover:border-blue-300 transition-colors group">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-full border-2 border-slate-100 overflow-hidden">
+                                <img alt="Alex Rivera" class="w-full h-full object-cover"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuGS7tfas9rV3Dsao263rFaPNfvMM8NakqJWiwbI9CIhf30dRUwZXf1c7CDgg3z6_YKXhq7GvJoxlT52Nd-aUa6S8XIjMprkFajQuHDXyFZxKGDvOPWcWHdN_1gBJ3tR-g3HqnXlgpF14kRZv_oP1LQQ71D9BrdQivbv-pMPniNUw9LXHPGNU65r0Rbbc3NJicELw8zUqmwZ0CXYk1H8JHHI4d-NRo65K9c5GoAwcfATF67KFyWlFwdC25G5h6fbtFBXa9wWWSEoxY" />
+                            </div>
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-900 leading-tight">{{ user[1] }}</h3>
+                                <p class="text-xs text-slate-400 font-medium">{{ user[0] }}</p>
+                            </div>
+                        </div>
+                        {% if user[4] == "ACTIVE" %}
+                        <span class="bg-green-100 text-green-700 px-2 py-1 text-xs rounded">Active</span>
+
+                        {% elif user[4] == "OFFLINE" %}
+                        <span class="bg-gray-100 text-gray-500 px-2 py-1 text-xs rounded">Offline</span>
+
+                        {% elif user[4] == "PENDING" %}
+                        <span class="bg-yellow-100 text-yellow-700 px-2 py-1 text-xs rounded">Pending</span>
+
+                        {% elif user[4] == "DISABLED" %}
+                        <span class="bg-red-100 text-red-700 px-2 py-1 text-xs rounded">Disabled</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-5">
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Security Role</p>
+                        <p class="text-sm font-semibold text-slate-700">{{ user[2] }}</p>
+                    </div>
+                    <div class="bg-slate-50 p-4 rounded-lg border border-slate-100">
+                        <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest text-center mb-3">
+                            Security Gesture Pattern
+                        </p>
+                        <div class="grid-cols-3 gap-3 w-fit mx-auto">
+                            {% set gestures = user[3].split('-') %}
+  
+                            {% for g in gestures %}
+                                
+                                {% if g == "UP" %}
+                                <span class="material-symbols-outlined text-blue-600 text-lg">arrow_upward</span>
+                                
+                                {% elif g == "DOWN" %}
+                                <span class="material-symbols-outlined text-blue-600 text-lg">arrow_downward</span>
+                                
+                                {% elif g == "LEFT" %}
+                                <span class="material-symbols-outlined text-blue-600 text-lg">arrow_back</span>
+                                
+                                {% elif g == "RIGHT" %}
+                                <span class="material-symbols-outlined text-blue-600 text-lg">arrow_forward</span>
+                                
+                                {% endif %}
+                            
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <button
+                        onclick="editUser('{{ user[0] }}', '{{ user[1] }}', '{{ user[2] }}', '{{ user[3] }}', '{{ user[4] }}')"
+                        class="mt-3 text-blue-600 text-sm font-bold">
+                        Edit
+                    </button>
+                    <input type="hidden" id="editMode" value="false">
+                </div>
+                {% endfor %}
+
+                <!-- Add New Personnel Empty State -->
+                <button onclick="openModal()"
+                    class="bg-slate-50/50 p-6 rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-4 hover:bg-slate-100 hover:border-blue-400 hover:text-blue-600 transition-all group min-h-[280px]">
+                    <div
+                        class="w-14 h-14 rounded-full bg-white border border-slate-200 flex items-center justify-center group-hover:scale-110 transition-transform shadow-sm">
+                        <svg class="w-8 h-8 text-slate-400 group-hover:text-blue-600" fill="none" stroke="currentColor"
+                            viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 4v16m8-8H4" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5">
+                            </path>
+                        </svg>
+                    </div>
+                    <div class="text-center">
+                        <p class="font-bold text-slate-900 group-hover:text-blue-600 text-sm">Add New Personnel</p>
+                        <p class="text-xs text-slate-400 mt-1 max-w-[160px]">Onboard a new staff member to the system
+                        </p>
+                    </div>
+                </button>
+            </div>
+        </div>
+        <!-- END: Main Grid Area -->
+    </main>
+    <!-- END: Main Content Area -->
+</body>
+<script>
+    let gesture = [];
+
+    function openModal() {
+        const modal = document.getElementById("userModal");
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+    }
+
+    function closeModal() {
+        document.getElementById("editMode").value = "false";
+        const modal = document.getElementById("userModal");
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+        gesture = [];
+        updateDisplay();
+    }
+
+    function addGesture(dir) {
+        if (gesture.length >= 6) return;
+        gesture.push(dir);
+        updateDisplay();
+    }
+
+    function updateDisplay() {
+        document.getElementById("gestureDisplay").innerText = gesture.join(" → ");
+    }
+
+    function saveUser() {
+        const name = document.getElementById("name").value;
+        const id = document.getElementById("user_id").value;
+        const role = document.getElementById("role").value;
+
+        fetch('/add_user', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id: id,
+                name: name,
+                role: role,
+                gesture: gesture.join('-'),
+                status: status
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                alert("User Added!");
+                location.reload();
+            });
+    }
+
+    function editUser(id, name, role, gesturePattern, status) {
+        openModal();
+
+        document.getElementById("editMode").value = "true";
+
+        document.getElementById("user_id").value = id;
+        document.getElementById("name").value = name;
+        document.getElementById("role").value = role;
+        document.getElementById("status").value = status;
+
+        gesture = gesturePattern.split("-");
+        updateDisplay();
+    }
+
+    function saveUser() {
+        const name = document.getElementById("name").value;
+        const id = document.getElementById("user_id").value;
+        const role = document.getElementById("role").value;
+        const status = document.getElementById("status").value;
+
+        const isEdit = document.getElementById("editMode").value === "true";
+
+        const url = isEdit ? '/edit_user' : '/add_user';
+
+        fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id: id,
+                name: name,
+                role: role,
+                gesture: gesture.join('-'),
+                status: status
+            })
+        })
+            .then(res => res.json())
+            .then(data => {
+                alert(isEdit ? "User Updated!" : "User Added!");
+                location.reload();
+            });
+    }
+</script>
+
+</html>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Security Admin Dashboard | Aegis Guard</title>
+    <!-- BEGIN: Scripts and Config -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'security-dark': '#0f172a',
+                        'security-sidebar': '#1e293b',
+                        'status-normal': '#10b981',
+                        'status-locked': '#ef4444',
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- END: Scripts and Config -->
+    <!-- BEGIN: Custom Styles -->
+    <style data-purpose="layout">
+        body {
+            background-color: #f8fafc;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+
+        .sidebar-transition {
+            transition: width 0.3s ease;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+    <!-- END: Custom Styles -->
+</head>
+
+<body class="flex min-h-screen text-slate-800">
+    <!-- BEGIN: Sidebar Navigation -->
+    <aside class="w-64 bg-security-sidebar text-slate-300 flex flex-col hidden lg:flex" data-purpose="sidebar-nav">
+        <div class="p-6 flex items-center gap-3 border-b border-slate-700">
+            <div class="w-8 h-8 bg-blue-600 rounded flex items-center justify-center">
+                <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewbox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+            </div>
+            <span class="font-bold text-white tracking-wider">AEGIS GUARD</span>
+        </div>
+        <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto custom-scrollbar">
+            <a class="flex items-center gap-3 px-4 py-3 bg-blue-600 text-white rounded-lg transition-colors" href="#">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                <span>Dashboard</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 hover:bg-slate-700 hover:text-white rounded-lg transition-colors"
+                href="{{ url_for('users') }}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                <span>User Access</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 hover:bg-slate-700 hover:text-white rounded-lg transition-colors"
+                href="#">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                </svg>
+                <span>Audit Logs</span>
+            </a>
+            <a class="flex items-center gap-3 px-4 py-3 hover:bg-slate-700 hover:text-white rounded-lg transition-colors"
+                href="#">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+                        stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2"></path>
+                </svg>
+                <span>System Config</span>
+            </a>
+        </nav>
+        <div class="p-4 border-t border-slate-700">
+            <div class="flex items-center gap-3 p-2 bg-slate-800 rounded-lg">
+                <img alt="Admin Profile" class="w-10 h-10 rounded-full border border-slate-600"
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1iZS682JEJB6gRgmo0izW-O8DEOw1KS_hVNdpzP6-Bs4O3v3gYXHSX74gGaLF-p-X18zplh1x1SrUP4QdZ6BeuBWxrNr-D2NY0ljXoxlt2ZX47udr0j0qYfU4huv8Il4FxN8lulTiop0cA5ZlSKP1ge_bupuWIWIB5ASx2--bmbVpeTbZcoUWzU2a6SRLuzV5QEEqj9vCeaqGUcV2wu9ZGZW2g0xf58WUswWBH8p0sWCBvoyE3leq5W9biCqfgnKDzKzDC4R0xwZk" />
+                <div class="overflow-hidden">
+                    <p class="text-sm font-medium text-white truncate">Administrator</p>
+                    <p class="text-xs text-slate-400 truncate">S. Garrison</p>
+                </div>
+            </div>
+        </div>
+    </aside>
+    <!-- END: Sidebar Navigation -->
+    <!-- BEGIN: Main Content Area -->
+    <main class="flex-1 flex flex-col min-h-screen overflow-hidden">
+        <!-- BEGIN: Top Header -->
+        <header class="bg-white border-b border-slate-200 px-8 py-4 flex items-center justify-between shadow-sm">
+            <div class="flex items-center gap-4">
+                <h1 class="text-2xl font-bold text-slate-900">Security Overview</h1>
+                <!-- System Status Indicator -->
+                <div class="flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full"
+                    data-purpose="status-badge">
+                    <span class="relative flex h-3 w-3">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    </span>
+                    <span class="text-sm font-bold uppercase tracking-tight">System Status: NORMAL</span>
+                </div>
+            </div>
+            <div class="flex items-center gap-4">
+                <button class="text-slate-500 hover:text-slate-700 relative p-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
+                            stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+                    </svg>
+                    <span class="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full border-2 border-white"></span>
+                </button>
+                <!-- Action Button -->
+                <div class="relative group flex items-center gap-3">
+                    <span
+                        class="text-[10px] font-bold text-slate-400 bg-slate-100 px-2 py-1 rounded tracking-wider">(PIN
+                        REQUIRED)</span>
+                    <button
+                        class="flex flex-col items-center bg-security-dark hover:bg-slate-800 text-white px-6 py-2 rounded-lg transition-all shadow-lg active:transform active:scale-95"
+                        data-purpose="admin-action-btn">
+                        <span class="font-bold text-sm">Unlock System</span>
+                        <span class="text-[10px] uppercase opacity-60 tracking-widest">(admin only)</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+        <!-- END: Top Header -->
+        <!-- BEGIN: Dashboard Grid -->
+        <div class="p-8 overflow-y-auto custom-scrollbar flex-1">
+            <!-- Stats Row -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <p class="text-slate-500 text-sm font-medium">Active Sessions</p>
+                    <div class="flex items-end justify-between mt-2">
+                        <h3 class="text-3xl font-bold text-slate-900">42</h3>
+                        <span class="text-emerald-500 text-xs font-bold flex items-center gap-1">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewbox="0 0 24 24"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path d="M5 10l7-7m0 0l7 7m-7-7v18" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2"></path>
+                            </svg>
+                            12%
+                        </span>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <p class="text-slate-500 text-sm font-medium">Access Point Status</p>
+                    <div class="flex items-end justify-between mt-2">
+                        <h3 class="text-3xl font-bold text-slate-900">1</h3>
+                        <span class="text-slate-400 text-xs font-bold uppercase tracking-widest">Active</span>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <p class="text-slate-500 text-sm font-medium">Security Threats</p>
+                    <div class="flex items-end justify-between mt-2">
+                        <h3 class="text-3xl font-bold text-slate-900">0</h3>
+                        <span
+                            class="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded text-[10px] font-bold uppercase">Safe</span>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <p class="text-slate-500 text-sm font-medium">System Uptime</p>
+                    <div class="flex items-end justify-between mt-2">
+                        <h3 class="text-3xl font-bold text-slate-900">99.9%</h3>
+                        <span class="text-blue-500 text-xs font-bold uppercase tracking-widest">Stable</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Entry Logs Section -->
+            <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden"
+                data-purpose="entry-logs">
+                <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                    <h2 class="text-lg font-bold text-slate-800">Recent Entry Logs</h2>
+                    <div class="flex gap-2">
+                        <button
+                            class="text-xs font-bold text-blue-600 hover:text-blue-700 px-3 py-1 border border-blue-200 rounded-md bg-white">Export
+                            CSV</button>
+                        <button
+                            class="text-xs font-bold text-slate-600 hover:text-slate-700 px-3 py-1 border border-slate-200 rounded-md bg-white">Filter</button>
+                    </div>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse" id="entry-logs-table">
+                        <thead>
+                            <tr class="bg-slate-50/50 text-slate-500 text-[11px] uppercase tracking-wider font-bold">
+                                <th class="px-6 py-4 border-b border-slate-100">Timestamp</th>
+                                <th class="px-6 py-4 border-b border-slate-100">User Identity</th>
+                                <th class="px-6 py-4 border-b border-slate-100">Access Point</th>
+                                <th class="px-6 py-4 border-b border-slate-100">Location</th>
+                                <th class="px-6 py-4 border-b border-slate-100">Status</th>
+                                <th class="px-6 py-4 border-b border-slate-100 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            {% for log in logs %}
+                                <tr>
+                                <td class="px-6 py-4 text-sm">{{ log[4] }}</td>
+                                <td class="px-6 py-4">{{ log[1] }}</td>
+                                <td class="px-6 py-4">Main Entry</td>
+                                <td class="px-6 py-4">Main Lobby</td>
+                                <td class="px-6 py-4">
+                                    {% if log[3] == "GRANTED" %}
+                                        <span class="text-green-600 font-bold">GRANTED</span>
+                                    {% else %}
+                                        <span class="text-red-600 font-bold">DENIED</span>
+                                    {% endif %}
+                                </td>
+                                </tr>
+                                {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div
+                    class="px-6 py-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 font-medium">
+                    <p>Showing {{ (page-1)*10 + 1 }} - {{ (page-1)*10 + logs|length }} of {{ total_pages*10 }} entries</p>
+                    <div class="flex items-center gap-1">
+                        
+                        {% for p in range(1, total_pages + 1) %}
+                            {% if p == page %}
+                                <span class="w-8 h-8 flex items-center justify-center bg-blue-600 text-white rounded">
+                                    {{ p }}
+                                </span>
+                            {% elif p <= 3 or p > total_pages - 2 or (p >= page-1 and p <= page+1) %}
+                                <a href="/?page={{ p }}"
+                                class="w-8 h-8 flex items-center justify-center border rounded hover:bg-slate-50">
+                                    {{ p }}
+                                </a>
+                            {% elif p == 4 or p == total_pages - 2 %}
+                                <span class="px-2">...</span>
+                            {% endif %}
+                        {% endfor %}
+                        
+                    </div>
+                </div>
+            </section>
+            <!-- END: Entry Logs Section -->
+        </div>
+        <!-- END: Dashboard Grid -->
+    </main>
+    <!-- END: Main Content Area -->
+</body>
+
+<script>
+setInterval(() => {
+    fetch('/api/logs')
+    .then(res => res.json())
+    .then(data => {
+        let tbody = document.getElementById("logs-body");
+        tbody.innerHTML = "";
+
+        data.forEach(log => {
+            let color = log.status === "GRANTED" ? "green" : "red";
+
+            tbody.innerHTML += `
+                <tr>
+                    <td class="px-6 py-4">${log.time}</td>
+                    <td class="px-6 py-4">${log.user_id}</td>
+                    <td class="px-6 py-4">Main Entry</td>
+                    <td class="px-6 py-4">Main Lobby</td>
+                    <td class="px-6 py-4 text-${color}-600 font-bold">${log.status}</td>
+                </tr>
+            `;
+        });
+    });
+}, 2000);
+</script>
+
+</html>
+
