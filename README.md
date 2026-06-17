@@ -358,7 +358,7 @@ This project successfully demonstrates:
 
 ## Authors
 
-**Rushi Patel**
+**Garv Patel**
 
 IoT & Embedded Systems Enthusiast
 
